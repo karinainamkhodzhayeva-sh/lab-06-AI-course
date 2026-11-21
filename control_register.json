@@ -1,0 +1,52 @@
+{
+  "harness_controls": [
+    "validate_input",
+    "blind",
+    "refuse",
+    "log",
+    "escalate"
+  ],
+  "format_problems": [],
+  "entries": [
+    {
+      "control": "validate_input",
+      "principle": "Accuracy and Data Integrity",
+      "principle_source": "UNESCO Recommendation on the Ethics of Artificial Intelligence (2021), Section III.2 (Safety and Security)",
+      "instrument": "Law of the Republic of Kazakhstan No. 94-V 'On Personal Data and Their Protection' (21 May 2013)",
+      "provision": "Article 12, Paragraph 1 (requirement for accuracy and reliability of personal data)",
+      "why_here": "Blocks out-of-range GPA or exam inputs before model inference so malformed records cannot generate arbitrary scores."
+    },
+    {
+      "control": "blind",
+      "principle": "Fairness and Non-Discrimination",
+      "principle_source": "UNESCO Recommendation on the Ethics of Artificial Intelligence (2021), Section III.2 (Fairness and Non-Discrimination)",
+      "instrument": "Constitution of the Republic of Kazakhstan (30 August 1995)",
+      "provision": "Article 14, Paragraph 2 (prohibition of discrimination based on origin, social status, gender, or language)",
+      "why_here": "Removes name and university fields to eliminate the +2.5 score advantage for flagship universities (sign p=0.002) and name-related flips."
+    },
+    {
+      "control": "refuse",
+      "principle": "Respect for Human Rights, Consent, and Purpose Limitation",
+      "principle_source": "OECD Recommendation of the Council on Artificial Intelligence (OECD/LEGAL/0449, 2019, amended 2024), Principle 1.2",
+      "instrument": "Law of the Republic of Kazakhstan No. 94-V 'On Personal Data and Their Protection' (21 May 2013)",
+      "provision": "Article 7, Paragraph 1 and Article 8 (collection and processing strictly within declared purposes and with subject consent)",
+      "why_here": "Stops unauthorized purposes, minors under 18, unconsented profiles, and prompt-injection strings before calling the model."
+    },
+    {
+      "control": "log",
+      "principle": "Transparency, Traceability, and Accountability",
+      "principle_source": "OECD Recommendation of the Council on Artificial Intelligence (OECD/LEGAL/0449, 2019, amended 2024), Principles 1.3 and 1.5",
+      "instrument": "Law of the Republic of Kazakhstan No. 418-V 'On Informatization' (24 November 2015)",
+      "provision": "Article 36, Paragraph 1 (ensuring integrity, auditability, and logging of electronic information resources)",
+      "why_here": "Writes a SHA-256 input hash, field lists, raw reply, and fired controls to decisions.jsonl so auditors can reconstruct every decision without storing PII."
+    },
+    {
+      "control": "escalate",
+      "principle": "Human Oversight and Determination",
+      "principle_source": "UNESCO Recommendation on the Ethics of Artificial Intelligence (2021), Section III.2 (Human Oversight and Determination)",
+      "instrument": "Regulation (EU) 2024/1689 (EU Artificial Intelligence Act, 13 June 2024) — cited as an international benchmark for educational AI",
+      "provision": "Article 14, Paragraphs 1–2 (human oversight to prevent or minimize risks to rights and livelihood)",
+      "why_here": "Routes borderline scores (40-49), unparseable outputs, and rejected lowest-income applicants to human reviewers, escalating 46 of 400 profiles (11.5%)."
+    }
+  ]
+}
