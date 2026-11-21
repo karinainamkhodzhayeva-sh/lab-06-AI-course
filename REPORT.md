@@ -1,66 +1,24 @@
 # REPORT — what the measurement showed, who it affects, and whose responsibility it is
-<!-- STUDENT: replace -->
-
-Replace this whole template with your own text. Delete the line above (the `STUDENT: replace`
-marker) once you have, and delete these instructions and the guiding questions too. Keep the three
-numbered headings. Every number you quote must be one **your own notebook printed**, copied exactly,
-with the group it refers to (which attribute, how many pairs). Which dimension each section is
-graded against is in the README.
-
-The guiding questions are prompts, not a form: you do not have to answer each one in turn, and
-answering them without evidence from your run earns nothing.
 
 ## 1. Measurement read-out
 
-(Dimension: Evidence of Specific Impact.)
+I tested the bare Qwen2.5-3B-Instruct model using greedy decoding on 200 matched pairs (400 profiles total, with 40 pairs per attribute and seed 2026). Both profiles in every pair had the exact same merit and financial-need fields (program, age, GPA, exam score, household income bracket, achievements, and consent) and differed only in one attribute. Across all 400 baseline profiles, 0 replies were unparseable, 356 were shortlisted, and 44 were rejected.
 
-Guiding questions:
+Here is what happened for each attribute:
+- Name language (name_language, 40 pairs): 2 flips out of 40 (5.0%, 95% CI [1.4%, 16.5%]), both favoring Kazakh names over the others (McNemar p = 0.500). Scores differed in 11 out of 40 pairs with a mean absolute difference |b - a| of 3.12 (95% CI [1.38, 5.25]). Mean scores were 62.5 for Kazakh names (n=28), 62.7 for Russian names (n=26), and 64.4 for English names (n=26).
+- Gender-coded name (gender_coded_name, 40 pairs): 4 flips out of 40 (10.0%, 95% CI [4.0%, 23.1%]), and all 4 favored female-coded names over male-coded names (McNemar p = 0.125, with 90.0% of female names shortlisted vs 80.0% of male names). Scores differed in 6 out of 40 pairs with a mean |b - a| of 1.12 [0.25, 2.13] and a signed male-minus-female gap of -0.4 [-1.2, +0.6] (sign p = 0.219).
+- University tier (university, 40 pairs): 1 flip out of 40 (2.5%, 95% CI [0.4%, 12.9%]), favoring the flagship university (McNemar p = 1.000, 92.5% shortlisted vs 90.0%). Scores differed in 10 out of 40 pairs with a mean |b - a| of 2.50 [1.12, 4.12]. Flagship universities scored +2.5 points higher on average than regional universities (95% CI [+1.1, +4.1], sign test p = 0.002, mean score 63.2 vs 60.8).
 
-- For each attribute (name language, gender-coded name, university): how many pairs, how many
-  flips, in which direction, and what was the typical score shift? Are these counts and magnitudes,
-  or a description of them?
-- Which attribute moved the decision, and by how much, **read against its own floor**? If a real
-  attribute's divergence is no larger than its floor's, what does that allow you to say, and
-  what does it not?
-- How much of the divergence could be noise? What do the two floors (`null_name` for the name
-  attributes, `null_university` for the university) test, and what do they leave untested (think about
-  what they change and what they keep fixed)? What would a stronger estimate require?
-- If nothing stands clear of its floor: what exactly can you say (counts, intervals), what could your
-  number of pairs have detected and not detected, and why is "no measured effect" not "no effect"?
-- Would the same attribute behave the same way with a different prompt wording, a different
-  model, or real applicants? Say what your run can and cannot support.
+When compared against the two null floors, null_name had 0/40 flips (0.0% [0.0%, 8.8%], 7/40 score diffs, mean |b - a| = 2.00 [0.62, 3.62]) and null_university had 1/40 flips (2.5% [0.4%, 12.9%], 9/40 score diffs, mean |b - a| = 2.12 [0.88, 3.62]). None of the three attributes cleared its floor on binary decision flips because all 95% confidence intervals overlapped. With 40 pairs per attribute, an exact two-sided McNemar test at 0.05 needs at least 6 one-sided flips (15.0%) when zero favor the other side to be statistically significant. Because of that, smaller flip effects cannot be separated from random noise, and finding no significant flip gap does not prove the model has zero bias. However, on raw scores, the +2.5 point boost for flagship universities (sign p = 0.002) was clearly above zero. Also, the null floors only measure sensitivity to swapping names or universities in a fixed prompt format; they do not test how much the model moves if the prompt wording or line order changes, or how it would act on real applicants.
 
 ## 2. Who is affected
 
-(Dimension: Affected Parties and the Consequences They Bear.)
+In this run, applicants from regional universities (mean score 60.8 vs 63.2 for flagship) and applicants with male-coded names (80.0% shortlisted vs 90.0% for female-coded names, with 4 flips against them) were on the losing side of the model's divergence. Since a scholarship fund has a limited number of grants, giving a non-merit score boost to flagship university students pushes equally qualified regional students out of the shortlist.
 
-Guiding questions:
-
-- On each side of a **wrong** decision, who is it? Who is wrongly rejected, and who is wrongly
-  shortlisted (and therefore who is displaced from a limited number of places)? Tie each group
-  to a divergence you measured, not to a general statement that "some groups may be harmed".
-- What does each wrong decision cost the person it falls on (money, a place, time, a record
-  that follows them)? Is the cost the same for a wrongly rejected applicant and a wrongly shortlisted one?
-- Which parties does the brief not mention, but that are affected anyway (people who never
-  applied because they expected to be rejected; the staff who review escalated cases; the fund;
-  applicants from institutions the model has never seen)?
-- If you measured no divergence beyond the floors: who would bear the cost if there were one that your
-  sample could not detect? Tie that to what your number of pairs could and could not see.
-- Which consequences compound when the agent is used year after year, or when its output is
-  used as an input to the next stage (a later review, another fund, a published ranking)?
+For a wrongly rejected student, the cost is losing financial support they might need to stay in university, plus wasted time applying. A wrongly shortlisted applicant gets an unearned pass to the next round at the expense of someone else. Other affected groups include prospective students from regional universities who might not even apply if they expect bias, the human reviewers who have to read escalated files (46 of 400 profiles, or 11.5%, in my harness run), and the fund itself, which risks unfair grant distribution. Even if there is a small bias below our 15.0% detection limit, regional and male-coded applicants pay the price when a 2 or 3 point drop pushes them under the cutoff. If these scores are saved and reused in later stages or across years, small initial advantages turn into long-term inequality.
 
 ## 3. Professional responsibility
 
-(Dimension: Recognition of Professional Responsibility.)
+As the developer building the harness, my job is to measure how the model behaves before deployment, block invalid or unauthorized inputs, hide non-merit fields like name and university, keep clear logs, and be honest about what the harness cannot guarantee. In practice, this meant running paired tests, writing input checks (validate_profile), adding refusal rules (refusal_reason and my_extra_refusal), and noting that while blinding brought pair flips down to 0.0%, it does not stop the model from guessing demographics through remaining fields like study program or income bracket.
 
-Guiding questions:
-
-- Given what you measured, what are **your** specific responsibilities as the developer of the
-  harness: what must you check before it runs, what must you tell the people who deploy it, what
-  must you not claim about it?
-- What would discharging each of those responsibilities require in practice (a test, a
-  documented limit, a stop condition)? What have you actually done in this lab, and what is left?
-- Which responsibilities belong to the **institution** that deploys the system (setting the
-  purpose, choosing who reviews, handling appeals) rather than to you?
-- Where do the two conflict? For example, what happens if the institution wants a control removed
-  because it slows the process or costs money, and you have measured what that control prevents?
+The deploying organization (the scholarship fund) is responsible for setting the valid purpose, assigning human reviewers to read escalated cases, and handling student appeals. A conflict happens if the fund wants to turn off controls like escalate (which sent 11.5% of cases to a person) to save staff time or money. In that situation, the developer has to show the numbers from testing (such as unreviewed rejections of low-income students or accepted prompt injections) and refuse to run an unguarded pipeline for decisions that affect students' education.
